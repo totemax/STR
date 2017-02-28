@@ -14,10 +14,13 @@ package body add is
 
     Electrodes_Priority : Constant Integer := 15;
     Eyes_Priority : Constant Integer := 16;
-    Eyes_State_Priority : Constant Integer := 17;
+    Eyes_State_Priority : Constant Integer := 14;
+    EEG_Samples_Priority : Constant Integer := 13;
 
     Eyes_Frequency : Constant Time_Span := Milliseconds(70);
     Electrodes_Frequency : Constant Time_Span := Milliseconds(250);
+
+    type EEG_State is (Low, High);
 
     Protected Eyes_State is
       Pragma Priority (Eyes_State_Priority);
@@ -27,6 +30,14 @@ package body add is
     Private
       Time_Closed : Integer := 0;
     end Eyes_State;
+
+    Protected EEG_Samples is
+      Pragma Priority (EEG_Samples_Priority);
+      Procedure Set_EEG_State(S: in EEG_State);
+      Function Get_EEG_State return EEG_State;
+    Private
+      State : EEG_State := High;
+    end EEG_Samples;
 
     task Electrodes is
       Pragma Priority (Electrodes_Priority);
@@ -63,18 +74,41 @@ package body add is
       end Get_Time_Closed;
     end Eyes_State;
 
+    Protected body EEG_Samples is
+      Procedure Set_EEG_State(S:in EEG_State) is
+      begin
+        State := S;
+      end Set_EEG_State;
+
+      Function Get_EEG_State return EEG_State is
+      begin
+        return State;
+      end Get_EEG_State;
+    end EEG_Samples;
+
     ----------------------------------------------------------------------
 
     ---------------------------------------------------------------------
     task body Electrodes  is
         R: EEG_Samples_Type;
+        Electrodes_Value : Integer := 0;
     begin
       loop
-         delay until (Clock + Electrodes_Frequency);
          Starting_Notice ("Electrodes");
+         Electrodes_Value := 0;
          Reading_Sensors (R);
-         Display_Electrodes_Sample (R);
+         for i in Number_Electrodes-4..Number_Electrodes loop
+           Electrodes_Value := Electrodes_Value + Integer(R(EEG_Samples_Index(i)));
+         end loop;
+         if Electrodes_Value < 20 then
+           Light(On);
+           EEG_Samples.Set_EEG_State(Low);
+         else
+           Light(Off);
+           EEG_Samples.Set_EEG_State(High);
+         end if;
          Finishing_Notice ("Electrodes");
+         delay until (Clock + Electrodes_Frequency);
       end loop;
     end Electrodes;
 
@@ -84,7 +118,6 @@ package body add is
         Time_Closed:Integer;
     begin
       loop
-         delay until (Clock + Eyes_Frequency);
          Starting_Notice ("Eyes_Detection");
          Reading_EyesImage (Current_R);
          if Current_R(left) = 0 and Current_R(right) = 0 then
@@ -102,6 +135,7 @@ package body add is
            end if;
          end if;
          Finishing_Notice ("Eyes_Detection");
+         delay until (Clock + Eyes_Frequency);
       end loop;
     end Eyes_Detection;
 
