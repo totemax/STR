@@ -12,16 +12,28 @@ with Devices; use Devices;
 
 package body add is
 
+    -- Tasks priorities
     Electrodes_Priority : Constant Integer := 15;
     Eyes_Priority : Constant Integer := 16;
-    Eyes_State_Priority : Constant Integer := 14;
-    EEG_Samples_Priority : Constant Integer := 13;
+    Show_Info_Priority : Constant Integer := 10;
 
+    -- Protected objects priorities
+    Eyes_State_Priority : Constant Integer := Eyes_Priority;
+    EEG_Samples_Priority : Constant Integer := Electrodes_Priority;
+
+    -- Task frequencies priorities
     Eyes_Frequency : Constant Time_Span := Milliseconds(70);
     Electrodes_Frequency : Constant Time_Span := Milliseconds(250);
+    Show_Info_Frequency : Constant Time_Span := Milliseconds(1000);
 
+    -- Types definition
     type EEG_State is (Low, High);
+    type EEG_State_Idx is new integer range 1..3;
+    type EEG_State_Buffer is Array(EEG_State_Idx) of EEG_State;
 
+    ----------------- HEADERS -----------------
+
+    -- Protected objects headers
     Protected Eyes_State is
       Pragma Priority (Eyes_State_Priority);
       Procedure Add_Time_Closed(Time:in Integer);
@@ -34,9 +46,10 @@ package body add is
     Protected EEG_Samples is
       Pragma Priority (EEG_Samples_Priority);
       Procedure Set_EEG_State(S: in EEG_State);
-      Function Get_EEG_State return EEG_State;
+      Function Get_EEG_State(idx : in EEG_State_Idx) return EEG_State;
     Private
-      State : EEG_State := High;
+      States : EEG_State_Buffer := (High, High, High);
+      Index : EEG_State_Idx := 1;
     end EEG_Samples;
 
     task Electrodes is
@@ -46,6 +59,10 @@ package body add is
     task Eyes_Detection is
       Pragma Priority (Eyes_Priority);
     end Eyes_Detection;
+
+    task Show_Info is
+      Pragma Priority (Show_Info_Priority);
+    end Show_Info;
 
     ----------------------------------------------------------------------
     ------------- procedure exported
@@ -77,14 +94,21 @@ package body add is
     Protected body EEG_Samples is
       Procedure Set_EEG_State(S:in EEG_State) is
       begin
-        State := S;
+        if index = 3 then
+          Index := 1;
+        else
+          Index := index + 1;
+        end if;
+        States(Index) := S;
       end Set_EEG_State;
 
-      Function Get_EEG_State return EEG_State is
+      Function Get_EEG_State (idx : in EEG_State_Idx) return EEG_State is
       begin
-        return State;
+        return States(idx);
       end Get_EEG_State;
     end EEG_Samples;
+
+
 
     ----------------------------------------------------------------------
 
@@ -94,7 +118,6 @@ package body add is
         Electrodes_Value : Integer := 0;
     begin
       loop
-         Starting_Notice ("Electrodes");
          Electrodes_Value := 0;
          Reading_Sensors (R);
          for i in Number_Electrodes-4..Number_Electrodes loop
@@ -107,7 +130,6 @@ package body add is
            Light(Off);
            EEG_Samples.Set_EEG_State(High);
          end if;
-         Finishing_Notice ("Electrodes");
          delay until (Clock + Electrodes_Frequency);
       end loop;
     end Electrodes;
@@ -118,7 +140,6 @@ package body add is
         Time_Closed:Integer;
     begin
       loop
-         Starting_Notice ("Eyes_Detection");
          Reading_EyesImage (Current_R);
          if Current_R(left) = 0 and Current_R(right) = 0 then
             Eyes_State.Add_Time_Closed(80);
@@ -126,7 +147,6 @@ package body add is
             Eyes_State.Reset_Time_Closed;
          end if;
          Time_Closed := Eyes_State.Get_Time_Closed;
-         Print_an_Integer(Time_Closed);
          if Time_Closed > 400 then
            Beep(2);
          else
@@ -134,10 +154,26 @@ package body add is
              Beep(1);
            end if;
          end if;
-         Finishing_Notice ("Eyes_Detection");
          delay until (Clock + Eyes_Frequency);
       end loop;
     end Eyes_Detection;
+
+    task body Show_Info is
+    begin
+     loop
+        Starting_Notice("Tiempo de ojos cerrados:");
+        Print_an_Integer(Eyes_State.Get_Time_Closed);
+        Starting_Notice("Ultimos estados de EEG:");
+        for i in EEG_State_Idx loop
+          if EEG_Samples.Get_EEG_State(i) = High then
+            Starting_Notice("High");
+          else
+            Starting_Notice("Low");
+          end if;
+        end loop;
+        delay until (Clock + Show_Info_Frequency);
+      end loop;
+    end Show_Info;
 
 
 begin
