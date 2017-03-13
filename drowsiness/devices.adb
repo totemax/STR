@@ -16,7 +16,7 @@ package body devices is
     EYES_REACTION_WHEN_BEEP: constant integer := 1;
     -- 0 = no reaction
     -- 1 = short reaction
-    -- 2 = large reaction 
+    -- 2 = large reaction
 
    --------------------------------------------------------------------------
    -- Procedures to access electrode sensors
@@ -86,7 +86,7 @@ package body devices is
 
 
    ---------------------------------------------------------------------
-   -- Procedures to get and analyze an eyes image 
+   -- Procedures to get and analyze an eyes image
    ---------------------------------------------------------------------
 
     cantidad_datos_EyesImage: constant := 50;
@@ -101,7 +101,7 @@ package body devices is
       Secuencia: tipo_Secuencia_EyesImage :=
                 ((85,85),(70,70),(85,85),(85,85),(05,05),
                  (85,85),(85,85),(20,20),(85,85),(85,85),
- 
+
                  (70,70),(60,60),(60,60),(40,40),(40,40),
                  (10,10),(10,10),( 0, 0),( 0, 0),( 0, 0),
 
@@ -142,10 +142,10 @@ package body devices is
          if (Level = 1) then
            for k in i..i+4 loop
               secuencia (k):= (Eyes_Samples_Values(80),Eyes_Samples_Values(80));
-           end loop; 
-         elsif (Level = 2) then 
+           end loop;
+         elsif (Level = 2) then
            for k in i..Indice_Secuencia_eyesImage'Last loop
-              Secuencia (k):= (Eyes_Samples_Values(80),Eyes_Samples_Values(80)); 
+              Secuencia (k):= (Eyes_Samples_Values(80),Eyes_Samples_Values(80));
            end loop;
          end if;
       end Reaction;
@@ -154,7 +154,7 @@ package body devices is
     end Lectura_EyesImage;
 
 ---------------------------------------------------------------------
---     Cuerpo de los procedmientos y objetos para DISPOSITIVOS E/S 
+--     Cuerpo de los procedmientos y objetos para DISPOSITIVOS E/S
 ---------------------------------------------------------------------
 
 procedure Display_Pulse_Rate (P: Values_Pulse_Rate) is
@@ -223,7 +223,7 @@ end Light;
 
 
 
-procedure Beep (v: Volume) is 
+procedure Beep (v: Volume) is
     -- emite un sonido durante 0.5 segundos con volumne "v"
 begin
   Current_Time (Big_Bang);
@@ -231,7 +231,7 @@ begin
   Put ("............%B");
   for i in 1..v loop
     Put ("EE");
-  end loop ;  
+  end loop ;
   Put ("P");
   Put (Volume'Image(v));
   Execution_Time (WCET_Alarm);
@@ -251,5 +251,3 @@ end Activate_Automatic_Driving;
 begin
    null;
 end devices;
-
-

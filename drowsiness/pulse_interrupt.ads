@@ -1,7 +1,7 @@
 
 
 with Ada.Real_Time; use Ada.Real_Time;
-with System; use System; 
+with System; use System;
 
 package pulse_interrupt is
 
@@ -34,6 +34,3 @@ package pulse_interrupt is
 
 
 end pulse_interrupt;
-
-
-

@@ -16,8 +16,9 @@ package body add is
     Electrodes_Priority : Constant Integer := 15;
     Eyes_Priority : Constant Integer := 16;
     Esporadica_Priority : Constant Integer := 14;
+
     Show_Info_Priority : Constant Integer := 10;
-    Risk_Control_Priority : Constant Integer := 12;
+    Risk_Control_Priority : Constant Integer := 13;
 
     -- Protected objects priorities
     Eyes_State_Priority : Constant Integer := Eyes_Priority;
@@ -51,6 +52,7 @@ package body add is
       Pragma Priority (EEG_Samples_Priority);
       Procedure Set_EEG_State(S: in EEG_State);
       Function Get_EEG_State(idx : in EEG_State_Idx) return EEG_State;
+      Function Get_Last_EEG_State return EEG_State;
     Private
       States : EEG_State_Buffer := (High, High, High);
       Index : EEG_State_Idx := 1;
@@ -136,6 +138,11 @@ package body add is
       begin
         return States(idx);
       end Get_EEG_State;
+
+      Function Get_Last_EEG_State return EEG_State is
+      begin
+        return States(Index);
+      end Get_Last_EEG_State;
     end EEG_Samples;
 
     Protected Body Pulse_Rate is
@@ -167,6 +174,7 @@ package body add is
     task body Electrodes  is
         R: EEG_Samples_Type;
         Electrodes_Value : Integer := 0;
+        Timer : Time := Big_Bang;
     begin
       loop
          Electrodes_Value := 0;
@@ -175,13 +183,12 @@ package body add is
            Electrodes_Value := Electrodes_Value + Integer(R(EEG_Samples_Index(i)));
          end loop;
          if Electrodes_Value < 20 then
-           Light(On);
            EEG_Samples.Set_EEG_State(Low);
          else
-           Light(Off);
            EEG_Samples.Set_EEG_State(High);
          end if;
-         delay until (Clock + Electrodes_Frequency);
+         Timer := Timer + Electrodes_Frequency;
+         delay until (Timer);
       end loop;
     end Electrodes;
 
@@ -189,27 +196,25 @@ package body add is
     task body Eyes_Detection is
         Current_R: Eyes_Samples_Type;
         Time_Closed:Integer;
+        Timer : Time := Big_Bang;
     begin
       loop
          Reading_EyesImage (Current_R);
+         --Starting_Notice("OJACOS");
          if Current_R(left) = 0 and Current_R(right) = 0 then
             Eyes_State.Add_Time_Closed(80);
          else
             Eyes_State.Reset_Time_Closed;
          end if;
+         --Print_an_Integer(Eyes_State.Get_Time_Closed);
          Time_Closed := Eyes_State.Get_Time_Closed;
-         if Time_Closed > 400 then
-           Beep(2);
-         else
-           if Time_Closed > 200 then
-             Beep(1);
-           end if;
-         end if;
-         delay until (Clock + Eyes_Frequency);
+         Timer := Timer + Eyes_Frequency;
+         delay until (Timer);
       end loop;
     end Eyes_Detection;
 
     task body Show_Info is
+      Timer : Time := Big_Bang;
     begin
      loop
         Starting_Notice("Tiempo de ojos cerrados:");
@@ -224,7 +229,8 @@ package body add is
         end loop;
         Starting_Notice("Pulso Actual:");
         Print_an_Integer(Integer(Float(Pulse_Rate.Get_Pulse_Rate)));
-        delay until (Clock + Show_Info_Frequency);
+        Timer := Timer + Show_Info_Frequency;
+        delay until (Timer);
       end loop;
     end Show_Info;
 
@@ -244,9 +250,52 @@ package body add is
     end Esporadica;
 
     task body Risk_Control is
-      Risk_Control_State : Integer := 0;
+      Is_Pulse, Is_EEG, Is_Eyes : Boolean := False;
+      type Risk_State is new Integer range 0..3;
+      State : Risk_State := 0;
+      Timer : Time := Big_Bang;
     begin
+      loop
+        State := 0;
 
+        if Integer(Float(Pulse_Rate.Get_Pulse_Rate)) < 50 then
+          State := State + 1;
+          Is_Pulse := True;
+        else
+          Is_Pulse := False;
+        end if;
+
+        if EEG_Samples.Get_EEG_State(3) = Low then
+          State := State + 1;
+          Is_EEG := True;
+        else
+          Is_EEG := False;
+        end if;
+
+        if Eyes_State.Get_Time_Closed > 200 then
+          State := State + 1;
+          Is_Eyes := True;
+        else
+          Is_Eyes := False;
+        end if;
+
+        if State = 3 then
+          Beep(5);
+          Light(On);
+          Activate_Automatic_Driving;
+        elsif State = 2 then
+          Beep(3);
+          Light(On);
+        elsif State = 1 then
+          if Is_Eyes or Is_Pulse then
+            Beep(1);
+          elsif Is_EEG then
+            Light(On);
+          end if;
+        end if;
+        Timer := Timer + Risk_Control_Frequency;
+        delay until (Timer);
+      end loop;
     end Risk_Control;
 
 begin
