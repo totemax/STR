@@ -13,23 +13,23 @@ with Pulse_Interrupt; use Pulse_Interrupt;
 package body add is
 
     -- Tasks priorities
-    Electrodes_Priority : Constant Integer := 15;
     Eyes_Priority : Constant Integer := 16;
+    Electrodes_Priority : Constant Integer := 15;
     Esporadica_Priority : Constant Integer := 14;
-
-    Show_Info_Priority : Constant Integer := 10;
     Risk_Control_Priority : Constant Integer := 13;
+    Show_Info_Priority : Constant Integer := 10;
 
     -- Protected objects priorities
     Eyes_State_Priority : Constant Integer := Eyes_Priority;
     EEG_Samples_Priority : Constant Integer := Electrodes_Priority;
     Pulse_Rate_Priority : Constant Integer := Esporadica_Priority;
 
-    -- Task frequencies priorities
-    Eyes_Frequency : Constant Time_Span := Milliseconds(70);
-    Electrodes_Frequency : Constant Time_Span := Milliseconds(250);
-    Show_Info_Frequency : Constant Time_Span := Milliseconds(1000);
-    Risk_Control_Frequency : Constant Time_Span := Milliseconds(500);
+    -- Task periods priorities
+    Eyes_Period_Int : Constant Integer := 100;
+    Eyes_Period : Constant Time_Span := Milliseconds(Eyes_Period_Int);
+    Electrodes_Period : Constant Time_Span := Milliseconds(250);
+    Show_Info_Period : Constant Time_Span := Milliseconds(1000);
+    Risk_Control_Period : Constant Time_Span := Milliseconds(500);
 
     -- Types definition
     type EEG_State is (Low, High);
@@ -37,7 +37,6 @@ package body add is
     type EEG_State_Buffer is Array(EEG_State_Idx) of EEG_State;
 
     ----------------- HEADERS -----------------
-
     -- Protected objects headers
     Protected Eyes_State is
       Pragma Priority (Eyes_State_Priority);
@@ -96,34 +95,36 @@ package body add is
       Pragma Priority (Risk_Control_Priority);
     end Risk_Control;
 
-    ----------------------------------------------------------------------
-    ------------- procedure exported
-    ----------------------------------------------------------------------
-    procedure Background is
-    begin
-      loop
-        null;
-      end loop;
-    end Background;
+    ----------------- PROTECTED OBJECTS IMPLEMENTATIONS -----------------
 
+    ---------------------------------------------------
+    ----- Eyes state protected object
+    ---------------------------------------------------
     Protected body Eyes_State is
+      -- Inctrement the closed time
       procedure Add_Time_Closed(Time:in Integer) is
       begin
         Time_Closed := Time_Closed + Time;
       end Add_Time_Closed;
 
+      -- Reset the closed time to 0
       procedure Reset_Time_Closed is
       begin
         Time_Closed := 0;
       end Reset_Time_Closed;
 
+      -- Returns the actual closed time
       Function Get_Time_Closed return Integer is
       begin
         return Time_Closed;
       end Get_Time_Closed;
     end Eyes_State;
 
+    ---------------------------------------------------
+    ----- Electroencephalography protected object
+    ---------------------------------------------------
     Protected body EEG_Samples is
+      -- Set the last EEG state
       Procedure Set_EEG_State(S:in EEG_State) is
       begin
         if index = 3 then
@@ -134,121 +135,157 @@ package body add is
         States(Index) := S;
       end Set_EEG_State;
 
+      -- Get an EEG state
       Function Get_EEG_State (idx : in EEG_State_Idx) return EEG_State is
       begin
         return States(idx);
       end Get_EEG_State;
 
+      -- Get the last EEG state
       Function Get_Last_EEG_State return EEG_State is
       begin
         return States(Index);
       end Get_Last_EEG_State;
     end EEG_Samples;
 
+    ---------------------------------------------------
+    ----- Pulse Rate Protected Object
+    ---------------------------------------------------
     Protected Body Pulse_Rate is
+      -- Set a pulse rate
       Procedure Set_Pulse_Rate(Pr: in Values_Pulse_Rate) is
       begin
         Pulse := Pr;
       end Set_Pulse_Rate;
 
+      -- Get the actual pulse rate
       Function Get_Pulse_Rate return Values_Pulse_Rate is
       begin
         return Pulse;
       end Get_Pulse_Rate;
     end Pulse_Rate;
 
+    ---------------------------------------------------
+    ----- Hardware interrupt protected object
+    ---------------------------------------------------
     Protected body Interrupt_Handler is
+      -- Open the interrupt semaphore
       Procedure Int_Handler is
       begin
         Llamada_Pendiente := True;
       end Int_Handler;
+
+      -- Entry for the spontaneous task (closing the semaphore when is handled)
       Entry Esperar_Evento When Llamada_Pendiente is
       begin
         Llamada_Pendiente := False;
       end Esperar_Evento;
     end Interrupt_Handler;
 
-    ----------------------------------------------------------------------
+    ----------------- TASKS IMPLEMENTATIONS -----------------
 
-    ---------------------------------------------------------------------
+    ---------------------------------------------------
+    ----- EEG task.
+    ---------------------------------------------------
     task body Electrodes  is
-        R: EEG_Samples_Type;
+        R: EEG_Samples_Type; -- Variable for sensors value
         Electrodes_Value : Integer := 0;
-        Timer : Time := Big_Bang;
+        Timer : Time := Big_Bang; -- Initial timer
     begin
       loop
+         Starting_Notice("Start EEG");
          Electrodes_Value := 0;
          Reading_Sensors (R);
+         -- Fetching the last 4 values
          for i in Number_Electrodes-4..Number_Electrodes loop
            Electrodes_Value := Electrodes_Value + Integer(R(EEG_Samples_Index(i)));
          end loop;
+         -- Set the state
          if Electrodes_Value < 20 then
            EEG_Samples.Set_EEG_State(Low);
          else
            EEG_Samples.Set_EEG_State(High);
          end if;
-         Timer := Timer + Electrodes_Frequency;
+         Timer := Timer + Electrodes_Period;
+         Finishing_Notice("End EEG");
          delay until (Timer);
       end loop;
     end Electrodes;
 
-    ---------------------------------------------------------------------
+    ---------------------------------------------------
+    ----- Eyes detection task.
+    ---------------------------------------------------
     task body Eyes_Detection is
         Current_R: Eyes_Samples_Type;
         Time_Closed:Integer;
-        Timer : Time := Big_Bang;
+        Timer : Time := Big_Bang; -- Inial time
     begin
       loop
+         Starting_Notice("Eyes Detection");
          Reading_EyesImage (Current_R);
-         --Starting_Notice("OJACOS");
          if Current_R(left) = 0 and Current_R(right) = 0 then
-            Eyes_State.Add_Time_Closed(80);
+            Eyes_State.Add_Time_Closed(Eyes_Period_Int);
          else
             Eyes_State.Reset_Time_Closed;
          end if;
-         --Print_an_Integer(Eyes_State.Get_Time_Closed);
          Time_Closed := Eyes_State.Get_Time_Closed;
-         Timer := Timer + Eyes_Frequency;
+         Timer := Timer + Eyes_Period;
+         Finishing_Notice("End Eyes");
          delay until (Timer);
       end loop;
     end Eyes_Detection;
 
+    ---------------------------------------------------
+    ----- Esporadica task. Hardware interrupt handler
+    ---------------------------------------------------
+    task body Esporadica is
+      Time_Last_Pulse : Time := Big_Bang; -- Initial time
+      Time_Current_Pulse : Time; -- Current time
+      Span : Float; -- Span between two times
+    begin
+      loop
+        Interrupt_Handler.Esperar_Evento; -- Wait for semaphore
+        Time_Current_Pulse := Clock; -- Set current pulse to actual clock
+        Span := Float(To_Duration(Time_Current_Pulse - Time_Last_Pulse)); -- Get the span
+        Span := 60.0 / Span; -- Get the pulse
+        Pulse_Rate.Set_Pulse_Rate(Values_Pulse_Rate(Span)); -- Set the pulse
+        Time_Last_Pulse := Time_Current_Pulse; -- Store the actual time
+      end loop;
+    end Esporadica;
+
+    ---------------------------------------------------
+    ----- Show info task.
+    ---------------------------------------------------
     task body Show_Info is
-      Timer : Time := Big_Bang;
+      Timer : Time := Big_Bang; -- Initial time
     begin
      loop
-        Starting_Notice("Tiempo de ojos cerrados:");
+        Starting_Notice("Start Show Info");
+        Put_Line("");
+        Put("Tiempo de ojos cerrados: ");
         Print_an_Integer(Eyes_State.Get_Time_Closed);
-        Starting_Notice("Ultimos estados de EEG:");
+        Put_Line("");
+        Put_Line("Ultimos estados de EEG:");
+        -- Iterate over the EEG states
         for i in EEG_State_Idx loop
           if EEG_Samples.Get_EEG_State(i) = High then
-            Starting_Notice("High");
+            Put_Line("High");
           else
-            Starting_Notice("Low");
+            Put_Line("Low");
           end if;
         end loop;
-        Starting_Notice("Pulso Actual:");
+        Put("Pulso Actual:");
         Print_an_Integer(Integer(Float(Pulse_Rate.Get_Pulse_Rate)));
-        Timer := Timer + Show_Info_Frequency;
+        Put_Line("");
+        Timer := Timer + Show_Info_Period;
+        Finishing_Notice("End Show Info");
         delay until (Timer);
       end loop;
     end Show_Info;
 
-    task body Esporadica is
-      Time_Last_Pulse : Time := Big_Bang;
-      Time_Current_Pulse : Time;
-      Span : Float;
-    begin
-      loop
-        Interrupt_Handler.Esperar_Evento;
-        Time_Current_Pulse := Clock;
-        Span := Float(To_Duration(Time_Current_Pulse - Time_Last_Pulse));
-        Span := 60.0 / Span;
-        Pulse_Rate.Set_Pulse_Rate(Values_Pulse_Rate(Span));
-        Time_Last_Pulse := Time_Current_Pulse;
-      end loop;
-    end Esporadica;
-
+    ---------------------------------------------------
+    ----- Risk Control task.
+    ---------------------------------------------------
     task body Risk_Control is
       Is_Pulse, Is_EEG, Is_Eyes : Boolean := False;
       type Risk_State is new Integer range 0..3;
@@ -256,8 +293,10 @@ package body add is
       Timer : Time := Big_Bang;
     begin
       loop
+        Starting_Notice("Start risk control");
         State := 0;
 
+        -- Is pulse alert?
         if Integer(Float(Pulse_Rate.Get_Pulse_Rate)) < 50 then
           State := State + 1;
           Is_Pulse := True;
@@ -265,6 +304,7 @@ package body add is
           Is_Pulse := False;
         end if;
 
+        -- Is EEG alert?
         if EEG_Samples.Get_EEG_State(3) = Low then
           State := State + 1;
           Is_EEG := True;
@@ -272,6 +312,7 @@ package body add is
           Is_EEG := False;
         end if;
 
+        -- Is eyes alert?
         if Eyes_State.Get_Time_Closed > 200 then
           State := State + 1;
           Is_Eyes := True;
@@ -279,25 +320,40 @@ package body add is
           Is_Eyes := False;
         end if;
 
+        -- State 3 alert
         if State = 3 then
           Beep(5);
           Light(On);
           Activate_Automatic_Driving;
+        -- State 2 alert
         elsif State = 2 then
           Beep(3);
           Light(On);
+        -- State 1 alert - alert default
         elsif State = 1 then
           if Is_Eyes or Is_Pulse then
             Beep(1);
           elsif Is_EEG then
             Light(On);
           end if;
+        else
+          Light(Off);
         end if;
-        Timer := Timer + Risk_Control_Frequency;
+        Timer := Timer + Risk_Control_Period;
+        Finishing_Notice("End risk control");
         delay until (Timer);
       end loop;
     end Risk_Control;
 
+    ----------------------------------------------------------------------
+    ------------- procedure exported
+    ----------------------------------------------------------------------
+    procedure Background is
+    begin
+      loop
+        null;
+      end loop;
+    end Background;
 begin
    null;
 end add;
