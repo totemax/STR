@@ -17,7 +17,7 @@ package body add is
     Electrodes_Priority : Constant Integer := 15;
     Esporadica_Priority : Constant Integer := 14;
     Risk_Control_Priority : Constant Integer := 13;
-    Show_Info_Priority : Constant Integer := 10;
+    Show_Info_Priority : Constant Integer := 18;--10;
 
     -- Protected objects priorities
     Eyes_State_Priority : Constant Integer := Eyes_Priority;
@@ -193,7 +193,7 @@ package body add is
         Timer : Time := Big_Bang; -- Initial timer
     begin
       loop
-         Starting_Notice("Start EEG");
+         --Starting_Notice("Start EEG");
          Electrodes_Value := 0;
          Reading_Sensors (R);
          -- Fetching the last 4 values
@@ -207,7 +207,7 @@ package body add is
            EEG_Samples.Set_EEG_State(High);
          end if;
          Timer := Timer + Electrodes_Period;
-         Finishing_Notice("End EEG");
+         --Finishing_Notice("End EEG");
          delay until (Timer);
       end loop;
     end Electrodes;
@@ -221,7 +221,7 @@ package body add is
         Timer : Time := Big_Bang; -- Inial time
     begin
       loop
-         Starting_Notice("Eyes Detection");
+         --Starting_Notice("Eyes Detection");
          Reading_EyesImage (Current_R);
          if Current_R(left) = 0 and Current_R(right) = 0 then
             Eyes_State.Add_Time_Closed(Eyes_Period_Int);
@@ -230,7 +230,7 @@ package body add is
          end if;
          Time_Closed := Eyes_State.Get_Time_Closed;
          Timer := Timer + Eyes_Period;
-         Finishing_Notice("End Eyes");
+         --Finishing_Notice("End Eyes");
          delay until (Timer);
       end loop;
     end Eyes_Detection;
@@ -245,11 +245,13 @@ package body add is
     begin
       loop
         Interrupt_Handler.Esperar_Evento; -- Wait for semaphore
+        --Starting_Notice("Pulso");
         Time_Current_Pulse := Clock; -- Set current pulse to actual clock
         Span := Float(To_Duration(Time_Current_Pulse - Time_Last_Pulse)); -- Get the span
         Span := 60.0 / Span; -- Get the pulse
         Pulse_Rate.Set_Pulse_Rate(Values_Pulse_Rate(Span)); -- Set the pulse
         Time_Last_Pulse := Time_Current_Pulse; -- Store the actual time
+        --Finishing_Notice("End pulso");
       end loop;
     end Esporadica;
 
@@ -260,7 +262,7 @@ package body add is
       Timer : Time := Big_Bang; -- Initial time
     begin
      loop
-        Starting_Notice("Start Show Info");
+        --Starting_Notice("Start Show Info");
         Put_Line("");
         Put("Tiempo de ojos cerrados: ");
         Print_an_Integer(Eyes_State.Get_Time_Closed);
@@ -278,7 +280,7 @@ package body add is
         Print_an_Integer(Integer(Float(Pulse_Rate.Get_Pulse_Rate)));
         Put_Line("");
         Timer := Timer + Show_Info_Period;
-        Finishing_Notice("End Show Info");
+        --Finishing_Notice("End Show Info");
         delay until (Timer);
       end loop;
     end Show_Info;
@@ -293,7 +295,7 @@ package body add is
       Timer : Time := Big_Bang;
     begin
       loop
-        Starting_Notice("Start risk control");
+        --Starting_Notice("Start risk control");
         State := 0;
 
         -- Is pulse alert?
@@ -340,7 +342,7 @@ package body add is
           Light(Off);
         end if;
         Timer := Timer + Risk_Control_Period;
-        Finishing_Notice("End risk control");
+        --Finishing_Notice("End risk control");
         delay until (Timer);
       end loop;
     end Risk_Control;

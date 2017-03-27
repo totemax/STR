@@ -1,16 +1,218 @@
+[ 0.004471000] >>> Eyes Detection
+[ 0.033280300] --- End Eyes
+[ 0.047585900] >>> Start EEG
+[ 0.070516400] --- End EEG
+[ 0.084310000] >>> Start risk c
+[ 0.100693700] >>> Eyes Detection
+[ 0.129534600] --- End Eyesontrol
+[ 0.146912200] ............Light: _off_
+[ 0.167958800] --- End risk control
+[ 0.186359800] >>> Start Sh
+[ 0.200695700] >>> Eyes Detection
+[ 0.229536800] --- End Eyesow Info
+Tiempo
+[ 0.251009700] >>> Start EEG
+[ 0.273941500] --- End EEG de ojos cerrados:  0
+Ulti
+[ 0.301046200] >>> Eyes Detection
+[ 0.329887700] --- End Eyesmos estados de EEG:
+High
+High
+High
+Pulso Actual: 100
 
- TSIM/ERC32 - remote SPARC simulator, version 1.0.10 (evaluation version)
+[ 0.371328400] --- End Show Info
+[ 0.400405000] >>> Eyes Detection
+[ 0.429215600] --- End Eyes
+[ 0.500724800] >>> Eyes Detection
+[ 0.529533800] --- End Eyes
+[ 0.543839000] >>> Start EEG
+[ 0.566768300] --- End EEG
+[ 0.580561200] >>> Start risk control
+[
+[ 0.601041500] >>> Eyes Detection
+[ 0.629882600] --- End Eyes 0.600016900] ............Light: _off_
+[ 0.664210700] --- End risk control
+[ 0.700394700] >>> Eyes Detection
+[ 0.729204900] --- End Eyes
+[ 0.750381700] >>> Start EEG
+[ 0.773283000] --- End EEG
+[ 0.800305900] >>> Eyes Detection
+[ 0.829117900] --- End Eyes
+[ 0.900304900] >>> Eyes Detection
+[ 0.929117500] --- End Eyes
+[ 1.000803000] >>> Eyes Detection
+[ 1.029614400] --- End Eyes
+[ 1.043919100] >>> Start EEG
+[ 1.066852300] --- End EEG
+[ 1.080645600] >>> Start risk control
 
- Copyright (C) 2001, Gaisler Research - all rights reserved.
- For latest updates, go to http://www.gaisler.com/
- Comments or bug-reports to tsim@gaisler.com
+[ 1.100613600] >>> Eyes Detection
+[ 1.129456500] --- End Eyes[ 1.143259000] ............Light: _off_
+[ 1.164297200] --- End risk control
+[ 1.182697800] >>> Start Show Info
+[ 1.200618000] >>> Eyes Detection
+[ 1.229461100] --- End Eyes
+Tiempo de ojo
+[ 1.250934000] >>> Start EEG
+[ 1.273867200] --- End EEGs cerrados:  0
+Ultimos est
+[ 1.300972700] >>> Eyes Detection
+[ 1.329815100] --- End Eyesados de EEG:
+High
+High
+High
+Pulso Actual: 120
 
-libreadline.so.3: cannot open shared object file: No such file or directory
-serial port A on stdin/stdout
-allocated 4096 K RAM memory
-allocated 2048 K ROM memory
-file not found
-tsim> resuming at 0xfffffffc
+[ 1.367672500] --- End Show Info
+[ 1.400394500] >>> Eyes Detection
+[ 1.429206300] --- End Eyes
+[ 1.500389500] >>> Eyes Detection
+[ 1.529200900] --- End Eyes
+[ 1.543506000] >>> Start EEG
+[ 1.566438300] --- End EEG
+[ 1.580230900] >>> Start risk control
+[
+[ 1.600710900] >>> Eyes Detection
+[ 1.629554800] --- End Eyes 1.599687500] ............Light: _off_
+[ 1.663882600] --- End risk control
+[ 1.700795700] >>> Eyes Detection
+[ 1.729610400] --- End Eyes
+[ 1.750381700] >>> Start EEG
+[ 1.773284800] --- End EEG
+[ 1.800305900] >>> Eyes Detection
+[ 1.829119000] --- End Eyes
+[ 1.900304900] >>> Eyes Detection
+[ 1.929118600] --- End Eyes
+[ 2.000401100] >>> Eyes Detection
+[ 2.029214300] --- End Eyes
+[ 2.043519200] >>> Start EEG
+[ 2.066451800] --- End EEG
+[ 2.080245000] >>> Start risk control
+[
+[ 2.100725400] >>> Eyes Detection
+[ 2.129569700] --- End Eyes 2.099700500] ............%BEEP 1
+[ 2.161501900] --- End risk control
+[ 2.179903200] >>> Start Show Info
+Tiemp
+[ 2.200894800] >>> Eyes Detection
+[ 2.229737800] --- End Eyeso de ojos cer
+[ 2.250699100] >>> Start EEG
+[ 2.273632800] --- End EEGrados:  0
+Ultimos estados
+[ 2.300738200] >>> Eyes Detection
+[ 2.329580100] --- End Eyesde EEG:
+Low
+Low
+High
+Pulso Actual: 90
 
-Program exited normally.
-tsim> 
+[ 2.363341700] --- End Show Info
+[ 2.400394700] >>> Eyes Detection
+[ 2.429206400] --- End Eyes
+[ 2.500389500] >>> Eyes Detection
+[ 2.529200800] --- End Eyes
+[ 2.543506300] >>> Start EEG
+[ 2.566439100] --- End EEG
+[ 2.580232000] >>> Start risk control
+[
+[ 2.600831400] >>> Eyes Detection
+[ 2.629645800] --- End Eyes 2.599688000] ............Light: ^ON^
+[ 2.663462400] --- End risk control
+[ 2.700394700] >>> Eyes Detection
+[ 2.729208900] --- End Eyes
+[ 2.750381700] >>> Start EEG
+[ 2.773283800] --- End EEG
+[ 2.800305900] >>> Eyes Detection
+[ 2.829118900] --- End Eyes
+[ 2.900304900] >>> Eyes Detection
+[ 2.929118500] --- End Eyes
+[ 3.000401100] >>> Eyes Detection
+[ 3.029213900] --- End Eyes
+[ 3.043518800] >>> Start EEG
+[ 3.066451700] --- End EEG
+[ 3.080244900] >>> Start risk control
+[
+[ 3.100724300] >>> Eyes Detection
+[ 3.129570400] --- End Eyes 3.099700500] ............%BEEEEEEP 3
+[ 3.163544800] ............Light: ^ON^
+[ 3.184049300] --- End risk cont
+[ 3.200914600] >>> Eyes Detection
+[ 3.229757300] --- End Eyesrol
+[ 3.24559
+[ 3.250718200] >>> Start EEG
+[ 3.273651900] --- End EEG8900] >>> Start Show Info
+
+[ 3.300756900] >>> Eyes Detection
+[ 3.329599600] --- End EyesTiempo de ojos cerrados:  0
+Ultimos estados de EEG:
+Low
+Low
+Low
+Pulso Actual: 67
+
+[ 3.385376600] --- End Show I
+[ 3.400736600] >>> Eyes Detection
+[ 3.429580200] --- End Eyesnfo
+[ 3.500737700] >>> Eyes Detection
+[ 3.529548700] --- End Eyes
+[ 3.543853900] >>> Start EEG
+[ 3.566785300] --- End EEG
+[ 3.580578600] >>> Start risk control
+[
+[ 3.601058800] >>> Eyes Detection
+[ 3.629903300] --- End Eyes 3.600034300] ............Light: ^ON^
+[ 3.663719600] --- End risk control
+[ 3.700394700] >>> Eyes Detection
+[ 3.729209300] --- End Eyes
+[ 3.750381700] >>> Start EEG
+[ 3.773284200] --- End EEG
+[ 3.800305900] >>> Eyes Detection
+[ 3.829119300] --- End Eyes
+[ 3.900304700] >>> Eyes Detection
+[ 3.929118700] --- End Eyes
+[ 4.000400700] >>> Eyes Detection
+[ 4.029213800] --- End Eyes
+[ 4.043518700] >>> Start EEG
+[ 4.066451400] --- End EEG
+[ 4.080244300] >>> Start risk control
+[
+[ 4.100724800] >>> Eyes Detection
+[ 4.129570100] --- End Eyes 4.099700100] ............%BEEP 1
+[ 4.161502500] --- End risk control
+[ 4.179903300] >>> Start Show Info
+Tiemp
+[ 4.200895200] >>> Eyes Detection
+[ 4.229738600] --- End Eyeso de ojos cer
+[ 4.250699200] >>> Start EEG
+[ 4.273632300] --- End EEGrados:  0
+Ultimos estados
+[ 4.300814200] >>> Eyes Detection
+[ 4.329626000] --- End Eyesde EEG:
+High
+Low
+High
+Pulso Actual: 79
+
+[ 4.363898900] --- End Show Info
+[ 4.400394700] >>> Eyes Detection
+[ 4.429206400] --- End Eyes
+[ 4.500313500] >>> Eyes Detection
+[ 4.529125200] --- End Eyes
+[ 4.543429800] >>> Start EEG
+[ 4.566363100] --- End EEG
+[ 4.580156300] >>> Start risk control
+[
+[ 4.600636300] >>> Eyes Detection
+[ 4.629481500] --- End Eyes 4.599612100] ............Light: _off_
+[ 4.663809900] --- End risk control
+[ 4.700394700] >>> Eyes Detection
+[ 4.729208900] --- End Eyes
+[ 4.750381700] >>> Start EEG
+[ 4.773284700] --- End EEG
+[ 4.800305900] >>> Eyes Detection
+[ 4.829118900] --- End Eyes
+[ 4.900304900] >>> Eyes Detection
+[ 4.929118500] --- End Eyes
+[ 5.000803000] >>> Eyes Detection
+[ 5.029614600] --- End Eyes
