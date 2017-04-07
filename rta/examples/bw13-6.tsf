@@ -1,0 +1,7 @@
+-- Burns & Wellings, table 13.6 (pg.  405)
+task set B with 3 tasks is
+   task Task_1 is periodic (1, 80, 0, 0, 32, 0, 0, 80, 0);
+   task Task_2 is periodic (2, 40, 0, 0,  5, 0, 0, 40, 0);
+   task Task_3 is periodic (3, 16, 0, 0,  4, 0, 0, 16, 0);
+end B;
+

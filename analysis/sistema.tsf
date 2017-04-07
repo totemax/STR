@@ -1,0 +1,12 @@
+task set Drowsiness with 6 tasks and 3 locks is
+  lock lock_eeg;
+  lock lock_ojos;
+  lock lock_pulso;
+
+  task task_pulso is sporadic (5, 333, 0, 0, 14, 0, 0, 30, 0) uses lock_pulso(11);
+  task task_ojos is periodic (4, 100, 0, 0, 30,  0, 0, 70, 0) uses lock_ojos(11);
+  task task_risk is periodic(3, 500, 0, 0, 41, 0, 0, 200, 0) uses lock_eeg(11), lock_ojos(11), lock_pulso(5);
+  task task_eeg is periodic (2, 250, 0, 0, 24, 0, 0, 250, 0) uses lock_eeg(11);
+  task task_show is periodic (1, 1000, 0, 0, 62, 0, 0, 1000, 0) uses lock_eeg(32), lock_ojos(11), lock_pulso(5);
+  task task_int is interrupt (6, 333, 0, 0, 2, 0, 0, 100, 0);
+end Drowsiness;

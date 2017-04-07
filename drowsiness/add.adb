@@ -15,9 +15,9 @@ package body add is
     -- Tasks priorities
     Eyes_Priority : Constant Integer := 16;
     Electrodes_Priority : Constant Integer := 15;
-    Esporadica_Priority : Constant Integer := 14;
-    Risk_Control_Priority : Constant Integer := 13;
-    Show_Info_Priority : Constant Integer := 18;--10;
+    Esporadica_Priority : Constant Integer := 17;
+    Risk_Control_Priority : Constant Integer := 16;
+    Show_Info_Priority : Constant Integer := 10;
 
     -- Protected objects priorities
     Eyes_State_Priority : Constant Integer := Eyes_Priority;
@@ -191,9 +191,9 @@ package body add is
         R: EEG_Samples_Type; -- Variable for sensors value
         Electrodes_Value : Integer := 0;
         Timer : Time := Big_Bang; -- Initial timer
+        Tiempo_Ejecucion : Time;
     begin
       loop
-         --Starting_Notice("Start EEG");
          Electrodes_Value := 0;
          Reading_Sensors (R);
          -- Fetching the last 4 values
@@ -207,7 +207,6 @@ package body add is
            EEG_Samples.Set_EEG_State(High);
          end if;
          Timer := Timer + Electrodes_Period;
-         --Finishing_Notice("End EEG");
          delay until (Timer);
       end loop;
     end Electrodes;
@@ -229,8 +228,8 @@ package body add is
             Eyes_State.Reset_Time_Closed;
          end if;
          Time_Closed := Eyes_State.Get_Time_Closed;
-         Timer := Timer + Eyes_Period;
          --Finishing_Notice("End Eyes");
+         Timer := Timer + Eyes_Period;
          delay until (Timer);
       end loop;
     end Eyes_Detection;

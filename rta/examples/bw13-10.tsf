@@ -1,0 +1,8 @@
+-- Burns & Wellings, table 13.10 (pg.  413)
+task set Example with 4 tasks is
+   task Task_1 is sporadic (4, 20, 0, 0,  3, 0, 0,  5, 0);
+   task Task_2 is sporadic (3, 15, 0, 0,  3, 0, 0,  7, 0);
+   task Task_3 is periodic (2, 10, 0, 0,  4, 0, 0, 10, 0);
+   task Task_4 is periodic (1, 20, 0, 0,  3, 0, 0, 20, 0);
+end Example;
+

@@ -1,0 +1,21 @@
+-- Genarl avionics platform
+task set GAP with 17 tasks is
+   task T1  is sporadic (17, 200, 0, 0,  3, 0.300, 0,   5, 0);
+   task T2  is periodic (16,  25, 0, 0,  2, 0.600, 0,  25, 0);
+   task T3  is periodic (15,  25, 0, 0,  5, 0.900, 0,  25, 0);
+   task T4  is periodic (14,  40, 0, 0,  1, 1.350, 0,  40, 0);
+   task T5  is periodic (13,  50, 0, 0,  3, 1.350, 0,  50, 0);
+   task T6  is periodic (12,  50, 0, 0,  5, 0.750, 0,  50, 0);
+   task T7  is periodic (11,  59, 0, 0,  8, 0.750, 0,  59, 0);
+   task T8  is periodic (10,  80, 0, 0,  9, 1.350, 0,  80, 0);
+   task T9  is periodic ( 9,  80, 0, 0,  2, 0.450, 0,  80, 0);
+   task T10 is periodic ( 8, 100, 0, 0,  5, 1.050, 0, 100, 0);
+   task T11 is periodic ( 7, 200, 0, 0,  1, 0.450, 0, 200, 0);
+   task T12 is periodic ( 6, 200, 0, 0,  3, 0.450, 0, 200, 0);
+   task T13 is periodic ( 5, 200, 0, 0,  1, 0.450, 0, 200, 0);
+   task T14 is periodic ( 4, 200, 0, 0,  1, 1.350, 0, 200, 0);
+   task T15 is periodic ( 3, 200, 0, 0,  3, 0.000, 0, 200, 0);
+   task T16 is periodic ( 2,1000, 0, 0,  1, 0.000, 0,1000, 0);
+   task T17 is periodic ( 1,1000, 0, 0,  1, 0.000, 0,1000, 0);
+end GAP;
+

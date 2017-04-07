@@ -1,0 +1,25 @@
+
+
+Response time analysis for task set Drowsiness
+----------------------------------------------
+Id Task      A PR  Period  Offset  Jitter    WCET   Block Deadline Response Sch
+-- --------- - -- ------- ------- ------- ------- ------- -------- -------- ---
+ 1 task_int  I  6 333.000   0.000   0.000   2.000   0.000  100.000    2.000 Yes
+ 2 task_pulsoS  5 333.000   0.000   0.000  14.000   5.000   30.000   21.000 Yes
+ 3 task_ojos P  4 100.000   0.000   0.000  30.000  11.000   70.000   57.000 Yes
+ 4 task_risk P  3 500.000   0.000   0.000  41.000  32.000  200.000  149.000 Yes
+ 5 task_eeg  P  2 250.000   0.000   0.000  24.000  32.000  250.000  173.000 Yes
+ 6 task_show P  11000.000   0.000   0.000  62.000   0.000 1000.000  233.000 Yes
+
+
+Priority ceilings for shared resources
+--------------------------------------
+Id Name      PR
+-- --------- --
+ 1 lock_pulso 5
+ 2 lock_ojos  4
+ 3 lock_eeg   3
+
+
+Total processor utilization :  58.80%
+
