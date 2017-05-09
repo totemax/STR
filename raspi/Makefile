@@ -11,9 +11,9 @@ ADA::
 
 FINAL::
 	gcc -c dispositivos.c
-	gnatmake.c ControlInclinacion.adb
-	gnatbind ControlInclinacion.ali
-	gnatlink ControlInclinacion.ali dispositivos.o -lwiringPi -lrt
+	gnatmake -c controlinclinacion.adb
+	gnatbind controlinclinacion.ali
+	gnatlink controlinclinacion.ali dispositivos.o -lwiringPi -lrt
 
 clean::
 	rm *.o ejemplo5 control2
