@@ -4,6 +4,7 @@
 #include <errno.h>
 #include <stdint.h>
 #include <wiringPi.h> // Include WiringPi library!
+#include <wiringPiI2C.h>
 
 //#include <softPwm.h>
 
@@ -33,6 +34,7 @@
 
 
 const int pwmValue = 75; // Use this to set an LED brightness
+int fd;
 
 int analogRead(int pin){
 	int ADC=-1;
@@ -158,3 +160,15 @@ int Cerrar_Dispositivos ()
   printf("Se cierran los dispositivos \n");
 }
 
+
+
+int inicializarAcelerometro(){
+  printf("hola %d\n", fd);
+  fd = wiringPiI2CSetup(0x68);
+  wiringPiI2CWriteReg8(fd, 0x6B, 0x00); 
+  return (fd >= 0);
+}
+
+int leerAcelerometroX(){
+  return wiringPiI2CReadReg8(fd,0x3B); 
+}

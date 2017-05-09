@@ -28,3 +28,6 @@ int Leer_Pulsador ();
 
 int Cerrar_Dispositivos ();
 
+int inicializarAcelerometro();
+
+int leerAcelerometroX();

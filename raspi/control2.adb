@@ -40,6 +40,12 @@ procedure control2 is
 
 	function Poner_Luces_verde ( Led_verde: in integer) return integer;
         pragma Import (C, Poner_Luces_verde,"Poner_Luces_verde");
+
+	function inicializarAcelerometro return integer;
+	pragma Import (C, inicializarAcelerometro, "inicializarAcelerometro");
+
+	function leerAcelerometroX return integer;
+	pragma Import (C, leerAcelerometroX, "leerAcelerometroX");
  
         -- Declare an Ada function spec for Get_Num, then use
         --  C function get_num for the implementation.
@@ -79,6 +85,8 @@ procedure control2 is
          put ("se ejecuta t2: Sensor0 ="); put (Valor); New_Line;
 	 Valor := Leer_Sensor (1);
          put ("se ejecuta t2: Sensor1 ="); put (Valor); New_Line;
+	 Valor := leerAcelerometroX;
+	 put ("valor del acelerómetro en X ="); put (Valor); New_Line;
 	end loop;
          delay (0.05); 
          put_line ("termina t2");
@@ -98,6 +106,7 @@ procedure control2 is
 begin
     put_line ("Aaranca programa principal");
     n := Inicializar_dispositivos;
+    n := inicializarAcelerometro;
     put ("Inicializados los dispositivos: "); put (n); New_line;
     Lanza_Tareas;
 end control2;
