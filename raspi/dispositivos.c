@@ -168,20 +168,33 @@ int inicializarAcelerometro(){
 }
 
 float leerGyroX(){
-  int gyro_x = wiringPiI2CReadReg8(fd,0x3B) << 8 | wiringPiI2CReadReg8(fd,0x3C);
+	int gyro_x = wiringPiI2CReadReg8(fd,0x3B) << 8 | wiringPiI2CReadReg8(fd,0x3C);
 	int gyro_y = wiringPiI2CReadReg8(fd,0x3D) << 8 | wiringPiI2CReadReg8(fd,0x3E);
 	int gyro_z = wiringPiI2CReadReg8(fd,0x3F) << 8 | wiringPiI2CReadReg8(fd,0x40);
-	float result = (float)(atan2((float)(gyro_y) , sqrt((gyro_x*gyro_x) + (gyro_z * gyro_z)) * 180 / M_PI));
-	printf("x_C: %f\n", result);
+	if(gyro_x > 0x8000) gyro_x = -(65536 - gyro_x);
+	if(gyro_y > 0x8000) gyro_y = -(65536 - gyro_y);
+	if(gyro_z > 0x8000) gyro_z = -(65536 - gyro_z);
+	float x = gyro_x / 16384.0;
+	float y = gyro_y / 16384.0;
+	float z = gyro_z / 16384.0;
+
+	float result = atan2((float)(y) , sqrt((x*x) + (z * z))) * 180 / M_PI;
 	return result;
 }
 
 
 float leerGyroY(){
-  int gyro_x = wiringPiI2CReadReg8(fd,0x3B) << 8 | wiringPiI2CReadReg8(fd,0x3C);
+	int gyro_x = wiringPiI2CReadReg8(fd,0x3B) << 8 | wiringPiI2CReadReg8(fd,0x3C);
 	int gyro_y = wiringPiI2CReadReg8(fd,0x3D) << 8 | wiringPiI2CReadReg8(fd,0x3E);
 	int gyro_z = wiringPiI2CReadReg8(fd,0x3F) << 8 | wiringPiI2CReadReg8(fd,0x40);
-	float result = (float)(-(atan2(gyro_x , sqrt((gyro_y*gyro_y) + (gyro_z * gyro_z)) * 180 / M_PI)));
-	printf("y_C: %f\n", result);
+	if(gyro_x > 0x8000) gyro_x = -(65536 - gyro_x);
+	if(gyro_y > 0x8000) gyro_y = -(65536 - gyro_y);
+	if(gyro_z > 0x8000) gyro_z = -(65536 - gyro_z);
+
+	float x = gyro_x /= 16384.0;
+	float y = gyro_y /= 16384.0;
+	float z = gyro_z /= 16384.0;
+
+	float result = -(atan2(x , sqrt((y*y) + (z * z))) * 180 / M_PI);
 	return result;
 }
