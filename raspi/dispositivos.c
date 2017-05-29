@@ -17,7 +17,7 @@
 
 #define PIN_libre 2 //GPIO_P1_13  // sin utilizar
 
-#define PIN_celula 6 //GPIO_P1_22  // optoacoplador 
+#define PIN_celula 6 //GPIO_P1_22  // optoacoplador
 
 #define PIN_switch1 7 //GPIO_P1_07  // switch 1
 #define PIN_switch2 0 //GPIO_P1_11  // switch 2
@@ -44,13 +44,13 @@ int analogRead(int pin){
   		unsigned char ByteSPI[7];
 
   		// loading data
-  		ByteSPI[0] = 0b01;//The last bit is the start signal 
+  		ByteSPI[0] = 0b01;//The last bit is the start signal
   		ByteSPI[1]=(0x80)|(pin<<4);//4 bits to configure the mode
-  		ByteSPI[2]=0;// 8 bit to write the result of analog reading 
+  		ByteSPI[2]=0;// 8 bit to write the result of analog reading
   		wiringPiSPIDataRW (ce, ByteSPI, 3);// we send the order
-  		usleep(20);// waiting 20 microsecpnds 
+  		usleep(20);// waiting 20 microsecpnds
 
-   		ADC=((ByteSPI[1]&0x03)<<8)|ByteSPI[2];// we take the data 
+   		ADC=((ByteSPI[1]&0x03)<<8)|ByteSPI[2];// we take the data
 	}
 	return (ADC);
 }
@@ -60,7 +60,7 @@ void Inicializar_dispositivos ()
   system("gpio load spi");
 
   pwmSetMode (PWM_MODE_MS); // PWM_MODEBAL or PWM_MODE_MS
-  
+
   //softPwmCreate (PIN_pwm, 0, 100);
 
   wiringPiSetup(); // Initialize wiringPi -- using Broadcom? pin numbers
@@ -71,16 +71,16 @@ void Inicializar_dispositivos ()
      exit (1) ;
   }
 
-  // Configurar el modo de los pines GPIO 
+  // Configurar el modo de los pines GPIO
     pinMode(PIN_led_rojo, OUTPUT); // salida e1 de semaforos
     pinMode(PIN_led_amarillo, OUTPUT); // salida e2 de semaforos
 
     pinMode(PIN_switch1, INPUT); // switch 1
     pinMode(PIN_switch2, INPUT); // switch 2
-  
+
     pinMode(PIN_celula, INPUT); // fotoacoplador
 
-    pinMode(PIN_pulsador, INPUT); // pulsador 
+    pinMode(PIN_pulsador, INPUT); // pulsador
     pinMode(PIN_libre, INPUT); // sin asignar
 
     pinMode(PIN_pwm, PWM_OUTPUT); // Set PWM LED as PWM output
@@ -96,7 +96,7 @@ void Inicializar_dispositivos ()
 int Valor_Switches ()
   {
     int Modo, s1, s2;
- 
+
     if (s1=digitalRead(PIN_switch1)) // Button is released if this returns 1
          printf ("Switch 1 ON -----------  \n");
     else printf ("Switch 1 OFF ----------  \n");
@@ -111,11 +111,11 @@ int Valor_Switches ()
 int Mover_Servo (int posicion)
 {
   printf("Girar Servo %d \n",posicion);
-  
+
   pwmWrite (1, posicion) ;
 
   // softPwmWrite (PIN_pwm,posicion);
- 
+
   return (0);
 }
 
@@ -132,27 +132,27 @@ int Leer_Todos_Los_Sensores (int valores[])
   printf("\n");
   return (0);
 }
-  
+
 
 int Poner_Rojo (int Valor_led_rojo)
 {
-   digitalWrite(PIN_led_rojo, Valor_led_rojo);     
+   digitalWrite(PIN_led_rojo, Valor_led_rojo);
 }
 
 int Poner_Verde (int Valor_led_amarillo)
 {
 
-   digitalWrite(PIN_led_amarillo, Valor_led_amarillo); 
+   digitalWrite(PIN_led_amarillo, Valor_led_amarillo);
 }
-       
+
 int Leer_Pulsador ()
-{ 
+{
  int valor;
  valor = digitalRead(PIN_pulsador);
- if (valor) 
+ if (valor)
       printf ("Pulsador ON -----------  \n");
  else printf ("Pulsador OFF ----------  \n");
- return (valor);    
+ return (valor);
 }
 
 int Cerrar_Dispositivos ()
@@ -160,15 +160,13 @@ int Cerrar_Dispositivos ()
   printf("Se cierran los dispositivos \n");
 }
 
-
-
 int inicializarAcelerometro(){
-  printf("hola %d\n", fd);
   fd = wiringPiI2CSetup(0x68);
-  wiringPiI2CWriteReg8(fd, 0x6B, 0x00); 
+  wiringPiI2CWriteReg8(fd, 0x6B, 0x00);
   return (fd >= 0);
 }
 
 int leerAcelerometroX(){
-  return wiringPiI2CReadReg8(fd,0x3B); 
+  int acc = wiringPiI2CReadReg8(fd,0x3B) << 8 | wiringPiI2CReadReg8(fd,0x3C);
+	return acc;
 }
