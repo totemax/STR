@@ -166,7 +166,18 @@ int inicializarAcelerometro(){
   return (fd >= 0);
 }
 
-int leerAcelerometroX(){
-  int acc = wiringPiI2CReadReg8(fd,0x3B) << 8 | wiringPiI2CReadReg8(fd,0x3C);
-	return acc;
+int leerCoordsX(){
+  int coords = wiringPiI2CReadReg8(fd,0x43) << 8 | wiringPiI2CReadReg8(fd,0x44);
+	return coords;
+}
+
+
+int leerCoordsY(){
+  int coords = wiringPiI2CReadReg8(fd,0x45) << 8 | wiringPiI2CReadReg8(fd,0x46);
+	return coords;
+}
+
+int leerCoordsZ(){
+	int coords = wiringPiI2CReadReg8(fd,0x47) << 8 | wiringPiI2CReadReg8(fd,0x48);
+	return coords;
 }
