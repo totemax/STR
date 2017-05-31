@@ -178,7 +178,7 @@ float leerGyroX(){
 	float y = gyro_y / 16384.0;
 	float z = gyro_z / 16384.0;
 
-	float result = atan2((float)(y) , sqrt((x*x) + (z * z))) * 180 / M_PI;
+	float result = atan2(y, sqrt(x*x+z*z)) * 180.0/M_PI;
 	return result;
 }
 
@@ -195,6 +195,6 @@ float leerGyroY(){
 	float y = gyro_y /= 16384.0;
 	float z = gyro_z /= 16384.0;
 
-	float result = -(atan2(x , sqrt((y*y) + (z * z))) * 180 / M_PI);
+	float result =  - (atan2(x, sqrt(y*y+z*z)) * 180.0/M_PI);
 	return result;
 }
