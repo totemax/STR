@@ -30,4 +30,6 @@ int Cerrar_Dispositivos ();
 
 int inicializarAcelerometro();
 
-int leerAcelerometroX();
+float leerGyroX();
+
+float leerGyroY();

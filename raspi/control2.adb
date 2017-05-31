@@ -32,20 +32,20 @@ procedure control2 is
         function Cerrar return integer;
         pragma Import (C, Cerrar,"Cerrar_Dispositivos");
 
-	function Leer_Sensor (pin: in integer) return integer;
+	      function Leer_Sensor (pin: in integer) return integer;
         pragma Import (C, Leer_Sensor,"analogRead");
 
-	function Poner_Luces_rojo (Led_Rojo: in integer) return integer;
+	      function Poner_Luces_rojo (Led_Rojo: in integer) return integer;
         pragma Import (C, Poner_Luces_rojo,"Poner_Luces_rojo");
 
-	function Poner_Luces_verde ( Led_verde: in integer) return integer;
+        function Poner_Luces_verde ( Led_verde: in integer) return integer;
         pragma Import (C, Poner_Luces_verde,"Poner_Luces_verde");
 
-	function inicializarAcelerometro return integer;
-	pragma Import (C, inicializarAcelerometro, "inicializarAcelerometro");
+        function inicializarAcelerometro return integer;
+        pragma Import (C, inicializarAcelerometro, "inicializarAcelerometro");
 
-	function leerCoordsX return integer;
-	pragma Import (C, leerCoordsX, "leerCoordsX");
+        function leerGyroX return integer;
+        pragma Import (C, leerCoordsX, "leerGyroX");
 
         -- Declare an Ada function spec for Get_Num, then use
         --  C function get_num for the implementation.
@@ -85,7 +85,7 @@ procedure control2 is
          put ("se ejecuta t2: Sensor0 ="); put (Valor); New_Line;
 	 Valor := Leer_Sensor (1);
          put ("se ejecuta t2: Sensor1 ="); put (Valor); New_Line;
-	 Valor := leerCoordsX;
+	 Valor := leerGyroX;
 	 put ("valor del acelerómetro en X ="); put (Valor); New_Line;
 	end loop;
          delay (0.05);

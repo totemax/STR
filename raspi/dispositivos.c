@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <wiringPi.h> // Include WiringPi library!
 #include <wiringPiI2C.h>
+#include <math.h>
 
 //#include <softPwm.h>
 
@@ -166,18 +167,17 @@ int inicializarAcelerometro(){
   return (fd >= 0);
 }
 
-int leerCoordsX(){
-  int coords = wiringPiI2CReadReg8(fd,0x43) << 8 | wiringPiI2CReadReg8(fd,0x44);
-	return coords;
+float leerGyroX(){
+  int gyro_x = wiringPiI2CReadReg8(fd,0x43) << 8 | wiringPiI2CReadReg8(fd,0x44);
+	int gyro_y = wiringPiI2CReadReg8(fd,0x45) << 8 | wiringPiI2CReadReg8(fd,0x46);
+	int gyro_z = wiringPiI2CReadReg8(fd,0x47) << 8 | wiringPiI2CReadReg8(fd,0x48);
+	return (float)(atan2(Y , sqrt((gyro_x*gyro_x) + (gyro_z * gyro_z)) * 180 / M_PI));
 }
 
 
-int leerCoordsY(){
-  int coords = wiringPiI2CReadReg8(fd,0x45) << 8 | wiringPiI2CReadReg8(fd,0x46);
-	return coords;
-}
-
-int leerCoordsZ(){
-	int coords = wiringPiI2CReadReg8(fd,0x47) << 8 | wiringPiI2CReadReg8(fd,0x48);
-	return coords;
+float leerGyroY(){
+	int gyro_x = wiringPiI2CReadReg8(fd,0x43) << 8 | wiringPiI2CReadReg8(fd,0x44);
+	int gyro_y = wiringPiI2CReadReg8(fd,0x45) << 8 | wiringPiI2CReadReg8(fd,0x46);
+	int gyro_z = wiringPiI2CReadReg8(fd,0x47) << 8 | wiringPiI2CReadReg8(fd,0x48);
+	return (float)(-(atan2(X , sqrt((gyro_y*gyro_y) + (gyro_z * gyro_z)) * 180 / M_PI)));
 }
