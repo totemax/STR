@@ -2,10 +2,10 @@ with Ada.Text_IO; use Ada.Text_IO;
 with Ada.Integer_Text_IO; use Ada.Integer_Text_IO;
 with Ada.Real_Time; use Ada.Real_Time;
 
-procedure ControlInclinacion is
+package body ControlInclinacion is
 
   Angles_Priority : Constant Integer := 16;
-  Angles_Period : Constant Time_Span := Milliseconds(100);
+  Angles_Period : Constant Time_Span := Milliseconds(500);
   n : Integer := 0;
   Big_Bang : constant Ada.Real_Time.Time := Clock;
 
@@ -34,6 +34,10 @@ procedure ControlInclinacion is
     y : float := 0.0;
   end Angles;
 
+  -- Procedure headers
+  procedure tasks;
+
+  -- Protected object implementation
   Protected body Angles is
     Procedure Set_Angle_X(a_x:in float) is
     begin
@@ -56,8 +60,18 @@ procedure ControlInclinacion is
     end Get_Angle_Y;
   end Angles;
 
-  procedure tasks;
+  -- Public functions implementations
+  Function Get_X return float is
+  begin
+    return Angles.Get_Angle_X;
+  end Get_X;
 
+  Function Get_Y return float is
+  begin
+    return Angles.Get_Angle_Y;
+  end Get_Y;
+
+  -- Procedures implementation
   procedure tasks is
     task Refresh_Inclinacion is
       Pragma Priority (Angles_Priority);
@@ -70,14 +84,10 @@ procedure ControlInclinacion is
     Timer : Time := Big_Bang; -- Initial timer
     begin
       loop
-	nx := leerGyroX;
-	ny := leerGyroY;
+        nx := leerGyroX;
+        ny := leerGyroY;
         Angles.Set_Angle_X(nx);
         Angles.Set_Angle_Y(ny);
-	Put("X:");
-	Put_Line(Float_Printable'Image(Float_Printable(nx)));
-	Put("Y:");
-	Put_Line(Float_Printable'Image(Float_Printable(ny)));
         Timer := Timer + Angles_Period;
         delay until (Timer);
       end loop;

@@ -134,7 +134,6 @@ int Leer_Todos_Los_Sensores (int valores[])
   return (0);
 }
 
-
 int Poner_Rojo (int Valor_led_rojo)
 {
    digitalWrite(PIN_led_rojo, Valor_led_rojo);
@@ -191,10 +190,10 @@ float leerGyroY(){
 	if(gyro_y > 0x8000) gyro_y = -(65536 - gyro_y);
 	if(gyro_z > 0x8000) gyro_z = -(65536 - gyro_z);
 
-	float x = gyro_x /= 16384.0;
-	float y = gyro_y /= 16384.0;
-	float z = gyro_z /= 16384.0;
+	float x = gyro_x / 16384.0;
+	float y = gyro_y / 16384.0;
+	float z = gyro_z / 16384.0;
 
-	float result =  - (atan2(x, sqrt(y*y+z*z)) * 180.0/M_PI);
+	float result =  - (atan2(x, sqrt((y*y)+(z*z))) * 180.0/M_PI);
 	return result;
 }

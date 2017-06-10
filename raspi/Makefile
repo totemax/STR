@@ -10,10 +10,10 @@ ADA::
 	gnatlink control2.ali dispositivos.o -lwiringPi -lrt
 
 FINAL::
-	gcc -c dispositivos.c
+	gcc -c mpu6050_i2c.c
 	gnatmake -c controlinclinacion.adb
 	gnatbind controlinclinacion.ali
-	gnatlink controlinclinacion.ali dispositivos.o -lwiringPi -lrt
+	gnatlink controlinclinacion.ali mpu6050_i2c.o -lwiringPi -lrt
 
 clean::
 	rm *.o ejemplo5 control2
